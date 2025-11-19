@@ -76,20 +76,20 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
-    - n8n.yourdomain.com
-    secretName: n8n-tls
+    - hosts:
+        - n8n.yourdomain.com
+      secretName: n8n-tls
   rules:
-  - host: n8n.yourdomain.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: n8n-main
-            port:
-              number: 80
+    - host: n8n.yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: n8n-main
+                port:
+                  number: 80
 ```
 
 ### 2. Configure Persistent Storage
@@ -147,6 +147,7 @@ kubectl get hpa -n n8n
 ### Vertical Scaling (Resource Limits)
 
 Edit `kubernetes/manifests.yaml` to adjust:
+
 - CPU requests/limits
 - Memory requests/limits
 
@@ -232,7 +233,7 @@ kubectl exec -n n8n redis-0 -- redis-cli --scan --pattern "*"
 
 ```yaml
 # In kubernetes/manifests.yaml
-image: n8n:latest  # Update tag
+image: n8n:latest # Update tag
 ```
 
 ### 2. Apply Rolling Update

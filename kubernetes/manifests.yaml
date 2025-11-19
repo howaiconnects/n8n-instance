@@ -96,56 +96,56 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres:15-alpine
-        ports:
-        - containerPort: 5432
-          name: postgres
-        env:
-        - name: POSTGRES_USER
-          value: n8n
-        - name: POSTGRES_DB
-          value: n8n
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: n8n-secrets
-              key: DB_POSTGRESDB_PASSWORD
-        volumeMounts:
-        - name: postgres-storage
-          mountPath: /var/lib/postgresql/data
-          subPath: postgres
-        livenessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - pg_isready -U n8n
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - pg_isready -U n8n
-          initialDelaySeconds: 5
-          periodSeconds: 10
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              value: n8n
+            - name: POSTGRES_DB
+              value: n8n
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: DB_POSTGRESDB_PASSWORD
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U n8n
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U n8n
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-  volumeClaimTemplates:
-  - metadata:
-      name: postgres-storage
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 20Gi
+            storage: 20Gi
 
 ---
 apiVersion: apps/v1
@@ -165,47 +165,47 @@ spec:
         app: redis
     spec:
       containers:
-      - name: redis
-        image: redis:7-alpine
-        command:
-          - redis-server
-          - "--appendonly"
-          - "yes"
-        ports:
-        - containerPort: 6379
-          name: redis
-        volumeMounts:
-        - name: redis-storage
-          mountPath: /data
-        livenessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          initialDelaySeconds: 5
-          periodSeconds: 10
+        - name: redis
+          image: redis:7-alpine
+          command:
+            - redis-server
+            - "--appendonly"
+            - "yes"
+          ports:
+            - containerPort: 6379
+              name: redis
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-  volumeClaimTemplates:
-  - metadata:
-      name: redis-storage
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 10Gi
+            storage: 10Gi
 
 ---
 apiVersion: apps/v1
@@ -235,95 +235,95 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - n8n-main
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - n8n-main
+                topologyKey: kubernetes.io/hostname
       containers:
-      - name: n8n-main
-        image: n8n:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 5678
-          name: http
-          protocol: TCP
-        env:
-        - name: DB_TYPE
-          value: postgresdb
-        - name: DB_POSTGRESDB_HOST
-          value: postgres
-        - name: DB_POSTGRESDB_PORT
-          value: "5432"
-        - name: DB_POSTGRESDB_DATABASE
-          value: n8n
-        - name: DB_POSTGRESDB_USER
-          value: n8n
-        - name: DB_POSTGRESDB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: n8n-secrets
-              key: DB_POSTGRESDB_PASSWORD
-        - name: N8N_ENCRYPTION_KEY
-          valueFrom:
-            secretKeyRef:
-              name: n8n-secrets
-              key: N8N_ENCRYPTION_KEY
-        - name: N8N_USER_MANAGEMENT_JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: n8n-secrets
-              key: N8N_USER_MANAGEMENT_JWT_SECRET
-        - name: QUEUE_MODE_ACTIVE
-          value: "true"
-        - name: QUEUE_BULL_REDIS_HOST
-          value: redis
-        - name: QUEUE_BULL_REDIS_PORT
-          value: "6379"
-        - name: N8N_PORT
-          value: "5678"
-        - name: N8N_PROTOCOL
-          value: https
-        - name: N8N_EDITOR_DISABLED
-          value: "false"
-        - name: GENERIC_TIMEZONE
-          value: UTC
-        envFrom:
-        - configMapRef:
-            name: n8n-config
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 5678
-          initialDelaySeconds: 60
-          periodSeconds: 30
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 5678
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "250m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
-        volumeMounts:
-        - name: n8n-data
-          mountPath: /home/node/app/.n8n
+        - name: n8n-main
+          image: n8n:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5678
+              name: http
+              protocol: TCP
+          env:
+            - name: DB_TYPE
+              value: postgresdb
+            - name: DB_POSTGRESDB_HOST
+              value: postgres
+            - name: DB_POSTGRESDB_PORT
+              value: "5432"
+            - name: DB_POSTGRESDB_DATABASE
+              value: n8n
+            - name: DB_POSTGRESDB_USER
+              value: n8n
+            - name: DB_POSTGRESDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: DB_POSTGRESDB_PASSWORD
+            - name: N8N_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: N8N_ENCRYPTION_KEY
+            - name: N8N_USER_MANAGEMENT_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: N8N_USER_MANAGEMENT_JWT_SECRET
+            - name: QUEUE_MODE_ACTIVE
+              value: "true"
+            - name: QUEUE_BULL_REDIS_HOST
+              value: redis
+            - name: QUEUE_BULL_REDIS_PORT
+              value: "6379"
+            - name: N8N_PORT
+              value: "5678"
+            - name: N8N_PROTOCOL
+              value: https
+            - name: N8N_EDITOR_DISABLED
+              value: "false"
+            - name: GENERIC_TIMEZONE
+              value: UTC
+          envFrom:
+            - configMapRef:
+                name: n8n-config
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5678
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 5678
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          volumeMounts:
+            - name: n8n-data
+              mountPath: /home/node/app/.n8n
       volumes:
-      - name: n8n-data
-        emptyDir: {}
+        - name: n8n-data
+          emptyDir: {}
       restartPolicy: Always
       serviceAccountName: n8n
 
@@ -341,12 +341,12 @@ metadata:
   name: n8n
   namespace: n8n
 rules:
-- apiGroups: [""]
-  resources: ["pods", "pods/log"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: [""]
-  resources: ["configmaps", "secrets"]
-  verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -359,6 +359,6 @@ roleRef:
   kind: Role
   name: n8n
 subjects:
-- kind: ServiceAccount
-  name: n8n
-  namespace: n8n
+  - kind: ServiceAccount
+    name: n8n
+    namespace: n8n

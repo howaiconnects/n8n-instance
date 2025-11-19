@@ -46,6 +46,7 @@
 ## Components
 
 ### N8N Main
+
 - **Purpose**: Manages workflows, UI, API endpoints
 - **Replicas**: 2 (HA setup)
 - **Responsibilities**:
@@ -56,6 +57,7 @@
 - **Scaling**: Manual or auto-scaling based on API load
 
 ### N8N Workers
+
 - **Purpose**: Execute queued jobs
 - **Replicas**: 3-10 (auto-scales)
 - **Responsibilities**:
@@ -65,12 +67,14 @@
 - **Scaling**: Horizontal via HPA (CPU/Memory based)
 
 ### PostgreSQL
+
 - **Purpose**: Data persistence
 - **Setup**: Single instance with persistent volume
 - **Database**: n8n metadata
 - **Backup**: Regular snapshots recommended
 
 ### Redis
+
 - **Purpose**: Job queue backend
 - **Setup**: Single instance with persistence
 - **Data**: Bull queue data
@@ -89,17 +93,20 @@
 ## High Availability
 
 ### N8N Main HA
+
 - Multiple replicas behind load balancer
 - Anti-affinity rules prevent co-location
 - Shared state via PostgreSQL
 - Stateless design enables easy scaling
 
 ### Data Persistence HA
+
 - PostgreSQL: Daily backups to external storage
 - Redis: AOF persistence enabled
 - Both use persistent volumes with snapshots
 
 ### Failover
+
 - Automatic pod restart on failure
 - Health checks every 30 seconds
 - Automatic traffic rerouting via service mesh
@@ -131,18 +138,21 @@
 ## Resource Allocation
 
 ### N8N Main
+
 - **CPU Request**: 250m
 - **CPU Limit**: 500m
 - **Memory Request**: 512Mi
 - **Memory Limit**: 1Gi
 
 ### N8N Worker
+
 - **CPU Request**: 250m
 - **CPU Limit**: 1000m
 - **Memory Request**: 512Mi
 - **Memory Limit**: 2Gi
 
 ### PostgreSQL
+
 - **CPU Request**: 100m
 - **CPU Limit**: 500m
 - **Memory Request**: 256Mi
@@ -150,6 +160,7 @@
 - **Storage**: 20Gi persistent volume
 
 ### Redis
+
 - **CPU Request**: 100m
 - **CPU Limit**: 500m
 - **Memory Request**: 256Mi
@@ -159,17 +170,20 @@
 ## Monitoring & Observability
 
 ### Metrics
+
 - Pod CPU/Memory usage
 - Queue depth (Redis)
 - Database query performance
 - Workflow execution times
 
 ### Logging
+
 - Application logs: `/var/log/n8n/`
 - Database logs: PostgreSQL logs
 - Access logs: Ingress controller logs
 
 ### Alerts
+
 - Pod restart rate > 2 in 5 min
 - Memory utilization > 90%
 - Queue depth > threshold
