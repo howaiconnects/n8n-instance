@@ -1,55 +1,331 @@
-# Copilot Instructions - Remote VM SSH Operations
+---
+applyTo: 'howaiconnects/n8n-instance'
+version: '1.0'
+lastUpdated: '2025-11-19'
+---
 
-**These instructions apply to all interactions with remote virtual machines, specifically the DO N8N Instance.**
+# 🤖 Copilot Instructions - N8N Instance Remote VM Operations
 
-## Primary Rule: SSH First, Always
-
-When working with remote VMs like `147.182.144.152` (DO N8N Instance):
-
-1. ✅ **ALWAYS** prefix commands with SSH connection
-2. ✅ **NEVER** assume local file system execution
-3. ✅ **ALWAYS** verify the command runs on the remote host
-4. ✅ **ALWAYS** include SSH in all code examples
-5. ✅ **ALWAYS** reference the remote VM documentation
+**Scope**: All interactions with the `howaiconnects/n8n-instance` repository and the DO N8N Instance (147.182.144.152)
 
 ---
 
-## SSH Prefix Pattern
+## 🔴 PRIMARY RULE: ALWAYS SSH FIRST
 
-### For Single Commands
+**When working with remote VMs, ALWAYS establish SSH connection before executing any commands.**
+
+### DO N8N Instance Configuration
+
+```plaintext
+Organization:  howaiconnects
+Repository:    n8n-instance
+Remote VM:     147.182.144.152
+User:          dimoss
+SSH Port:      22 (default)
+Region:        Toronto (tor1)
+OS:            Ubuntu 24.04.3 LTS
+Docker:        28.4.0
+Status:        Production (6 containers running)
+```
+
+---
+
+## 🔧 SSH Command Patterns
+
+### Pattern 1: Single Command Execution
 
 ```bash
 ssh dimoss@147.182.144.152 "command_here"
 ```
 
-### For Multi-Line Operations
+**Example:**
+
+```bash
+ssh dimoss@147.182.144.152 "docker ps -a"
+```
+
+### Pattern 2: Multi-Line Operations
 
 ```bash
 ssh dimoss@147.182.144.152 << 'EOF'
-line1
-line2
-line3
+command1
+command2
+command3
 EOF
 ```
 
-### For Long-Running Operations (background)
+**Example:**
 
 ```bash
-ssh dimoss@147.182.144.152 "nohup command &"
+ssh dimoss@147.182.144.152 << 'EOF'
+cd /home/dimoss/n8n-compose
+docker-compose ps
+docker-compose logs --tail 10
+EOF
+```
+
+### Pattern 3: Background Operations (Long-Running)
+
+```bash
+ssh dimoss@147.182.144.152 "nohup long_running_command > /tmp/output.log 2>&1 &"
+```
+
+### Pattern 4: Interactive Session
+
+```bash
+ssh dimoss@147.182.144.152
+# Now in remote shell, commands execute on VM
+exit  # Return to local shell
+```
+
+### Pattern 5: File Transfer (SCP)
+
+```bash
+# Download from remote
+scp dimoss@147.182.144.152:/remote/path /local/path
+
+# Upload to remote
+scp /local/path dimoss@147.182.144.152:/remote/path
 ```
 
 ---
 
-## DO N8N Instance Configuration
+## 📋 Repository Standards & Policies
 
+### Branch Strategy
+
+- **Primary Branch**: `main`
+- **Feature Branches**: `feature/description`
+- **Bugfix Branches**: `bugfix/description`
+- **Hotfix Branches**: `hotfix/description`
+
+### Commit Message Format
+
+```markdown
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
 ```
-IP Address:    147.182.144.152
-Username:      dimoss
-SSH Port:      22
-Region:        Toronto (tor1)
-OS:            Ubuntu 24.04.3 LTS
-Docker:        28.4.0
-N8N Location:  /home/dimoss/n8n-compose
+
+**Types**:
+
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation
+- `chore:` - Maintenance
+- `perf:` - Performance
+- `test:` - Tests
+- `infra:` - Infrastructure
+
+### File Organization Standards
+
+```plaintext
+howaiconnects/n8n-instance/
+├── docker/
+├── kubernetes/
+├── scripts/
+├── docs/
+├── config/
+└── .github/
+```
+
+---
+
+## 🏢 Organization Standards (howaiconnects)
+
+### Documentation Requirements
+
+All repositories MUST include:
+
+1. **README.md** - Overview, quick start, features
+2. **CONTRIBUTING.md** - Development guidelines
+3. **CHANGELOG.md** - Version history
+4. **docs/** - Architecture, deployment, troubleshooting
+
+### Code Quality Standards
+
+- Use language-specific linters
+- Require comments for complex logic
+- Handle all external errors
+- No hardcoded credentials
+
+### Security Policies
+
+✅ **Must Do**:
+
+- Use environment variables for secrets
+- Rotate credentials regularly
+- Enable branch protection
+- Require code reviews
+
+❌ **Never**:
+
+- Commit credentials or secrets
+- Use hardcoded API keys
+- Push to main directly
+
+---
+
+## 🚀 N8N Instance Operational Standards
+
+### Running Services (Verify via SSH)
+
+```bash
+ssh dimoss@147.182.144.152 "docker ps --format 'table {{.Names}}\t{{.Status}}'"
+```
+
+Expected containers:
+
+- n8n-compose-n8n-1 (Main)
+- n8n-compose-n8n-worker-1, 2 (Workers)
+- n8n-compose-postgres-1 (Database)
+- n8n-compose-redis-1 (Queue)
+- n8n-compose-traefik-1 (Load Balancer)
+
+### Health Checks
+
+```bash
+# Full system health
+ssh dimoss@147.182.144.152 "docker ps -a && docker stats --no-stream"
+```plaintext
+```
+
+### Configuration Management
+
+**Environment Variables Location**:
+
+```bash
+ssh dimoss@147.182.144.152 "cat /home/dimoss/n8n-compose/.env"
+```
+
+---
+
+## 🔄 Development Workflow
+
+### Feature Development
+
+```bash
+git checkout -b feature/new-feature
+# Make changes
+git add .
+git commit -m "feat: describe the feature"
+git push origin feature/new-feature
+```
+
+### Testing on Remote VM
+
+```bash
+ssh dimoss@147.182.144.152 << 'EOF'
+cd /home/dimoss/n8n-compose
+git fetch origin
+git checkout feature/new-feature
+docker-compose down
+docker-compose up -d
+EOF
+```
+
+### Deployment to Production
+
+```bash
+# Only after PR approval and merge
+ssh dimoss@147.182.144.152 << 'EOF'
+cd /home/dimoss/n8n-compose
+git pull origin main
+docker-compose down
+docker-compose up -d
+EOF
+```
+
+---
+
+## 📊 Deployment Procedures
+
+### Pre-Deployment Checklist
+
+- [ ] All tests pass
+- [ ] PR reviewed and approved
+- [ ] Documentation updated
+- [ ] Backup created
+
+### Deployment Steps
+
+```bash
+# Step 1: Backup
+ssh dimoss@147.182.144.152 << 'EOF'
+cd /home/dimoss/n8n-compose
+docker exec n8n-compose-postgres-1 pg_dump -U n8n n8n > /tmp/backup-$(date +%Y%m%d-%H%M%S).sql
+EOF
+
+# Step 2: Pull and restart
+ssh dimoss@147.182.144.152 << 'EOF'
+cd /home/dimoss/n8n-compose
+git pull origin main
+docker-compose down
+docker-compose pull
+docker-compose up -d
+EOF
+```
+
+### Rollback Procedure
+
+```bash
+ssh dimoss@147.182.144.152 << 'EOF'
+cd /home/dimoss/n8n-compose
+git revert HEAD
+docker-compose down
+docker-compose up -d
+EOF
+```
+
+---
+
+## 🛡️ Security Guidelines
+
+### SSH Key Management
+
+✅ **Recommended**:
+
+- Use SSH keys (not passwords)
+- Store keys in `~/.ssh/` with 600 permissions
+- Use key passphrases
+- Rotate keys annually
+
+### Credential Management
+
+✅ **Do**:
+
+- Store secrets in `.env` (not committed)
+- Use environment variables in code
+- Rotate API keys regularly
+
+❌ **Never**:
+
+- Commit credentials
+- Share credentials via chat
+- Hardcode API keys
+
+---
+
+## 🐛 Troubleshooting Remote Operations
+
+### SSH Connection Issues
+
+```bash
+ssh -v dimoss@147.182.144.152 "echo connected"
+```
+
+### Container Issues
+
+```bash
+ssh dimoss@147.182.144.152 "docker logs n8n-compose-n8n-1 --tail 100"
+```
+
+### Network Issues
+
+```bash
+ssh dimoss@147.182.144.152 "nslookup github.com"
 ```
 
 ---
@@ -59,6 +335,7 @@ N8N Location:  /home/dimoss/n8n-compose
 ### 1. Command Execution
 
 **❌ WRONG** - This runs locally:
+
 ```bash
 docker ps
 cd /home/dimoss/n8n-compose
@@ -66,6 +343,7 @@ docker-compose logs
 ```
 
 **✅ CORRECT** - This runs on the remote VM:
+
 ```bash
 ssh dimoss@147.182.144.152 "docker ps"
 ssh dimoss@147.182.144.152 "cd /home/dimoss/n8n-compose && docker-compose logs"
@@ -74,11 +352,13 @@ ssh dimoss@147.182.144.152 "cd /home/dimoss/n8n-compose && docker-compose logs"
 ### 2. File Operations
 
 **❌ WRONG** - Tries to access local filesystem:
+
 ```bash
 cat /home/dimoss/n8n-compose/.env
 ```
 
 **✅ CORRECT** - Accesses remote filesystem via SSH:
+
 ```bash
 ssh dimoss@147.182.144.152 "cat /home/dimoss/n8n-compose/.env"
 ```
@@ -86,12 +366,14 @@ ssh dimoss@147.182.144.152 "cat /home/dimoss/n8n-compose/.env"
 ### 3. Script Execution
 
 **❌ WRONG** - Script runs locally:
+
 ```bash
 ./deploy.sh
 bash scripts/health-check.sh
 ```
 
 **✅ CORRECT** - Script runs on remote VM:
+
 ```bash
 ssh dimoss@147.182.144.152 "bash /home/dimoss/n8n-compose/deploy.sh"
 ssh dimoss@147.182.144.152 "cd /home/dimoss/n8n-compose && ./deploy.sh"
@@ -100,11 +382,13 @@ ssh dimoss@147.182.144.152 "cd /home/dimoss/n8n-compose && ./deploy.sh"
 ### 4. Diagnostic Commands
 
 **❌ WRONG**:
+
 ```bash
 docker exec n8n-compose-n8n-1 curl http://localhost:5678/healthz
 ```
 
 **✅ CORRECT**:
+
 ```bash
 ssh dimoss@147.182.144.152 "docker exec n8n-compose-n8n-1 curl http://localhost:5678/healthz"
 ```
@@ -250,6 +534,7 @@ ssh dimoss@147.182.144.152 "docker ps -f name=n8n-main"
 ## When to Use SSH
 
 ✅ **Use SSH When**:
+
 - Working with Docker containers on 147.182.144.152
 - Checking service status on the remote VM
 - Viewing logs from remote services
@@ -262,6 +547,7 @@ ssh dimoss@147.182.144.152 "docker ps -f name=n8n-main"
 - Troubleshooting issues
 
 ❌ **Don't Need SSH When**:
+
 - Reviewing this GitHub repository code
 - Reading documentation
 - Planning architecture
@@ -307,6 +593,7 @@ BATCH
 ## Documentation References
 
 For detailed SSH operations, refer to:
+
 - `docs/REMOTE-SSH-OPERATIONS.md` - Comprehensive SSH guide
 - `docs/DEPLOYMENT.md` - Deployment procedures
 - `README.md` - Project overview
@@ -331,7 +618,7 @@ Before executing remote operations, verify:
 📍 **Consistency**: Every remote command starts with `ssh dimoss@147.182.144.152`  
 ✅ **Clarity**: Always explain why SSH is needed  
 🔄 **Reliability**: Include error handling  
-📚 **Documentation**: Reference this file and REMOTE-SSH-OPERATIONS.md  
+📚 **Documentation**: Reference this file and REMOTE-SSH-OPERATIONS.md
 
 ---
 

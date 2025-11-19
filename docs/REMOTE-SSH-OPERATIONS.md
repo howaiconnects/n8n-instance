@@ -1,6 +1,6 @@
 # Remote VM SSH Operations Guide
 
-**⚠️ IMPORTANT: Always SSH into the remote VM first before executing any commands**
+## ⚠️ IMPORTANT: Always SSH into the remote VM first before executing any commands
 
 This guide ensures all operations on the DO N8N Instance (147.182.144.152) are performed via SSH.
 
@@ -144,7 +144,7 @@ ssh-copy-id -i ~/.ssh/do_n8n.pub dimoss@147.182.144.152
 
 ### Add to SSH Config (~/.ssh/config)
 
-```
+```plaintext
 Host n8n-do
     HostName 147.182.144.152
     User dimoss
