@@ -1,0 +1,16 @@
+.git
+.gitignore
+README.md
+.env*
+node_modules
+npm-debug.log
+.vscode
+.idea
+.DS_Store
+*.log
+kubernetes/
+docs/
+scripts/
+.github/
+dist/
+build/

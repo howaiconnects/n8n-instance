@@ -1,0 +1,63 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+yarn.lock
+package-lock.json
+
+# Build outputs
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Secrets
+secrets/
+*.key
+*.pem
+*.crt
+*.pfx
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database
+*.db
+*.sqlite
+dump.sql
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Node
+.npm
+.node_repl_history
+
+# Redis
+dump.rdb
+nodes.conf
+
+# N8N specific
+.n8n/
+user-data/
