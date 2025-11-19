@@ -1,0 +1,331 @@
+{
+  "projectName": "N8N Instance - Development & Operations",
+  "organization": "howaiconnects",
+  "repository": "n8n-instance",
+  "description": "GitHub Project configuration for N8N Instance development, deployment, and operations",
+  "version": "1.0",
+  "created": "2025-11-19",
+  "views": [
+    {
+      "name": "Backlog",
+      "type": "table",
+      "description": "Unscheduled work items",
+      "filters": {
+        "status": ["TODO", "Backlog"]
+      },
+      "groupBy": "Priority",
+      "sortBy": "Created (newest first)"
+    },
+    {
+      "name": "Sprint Active",
+      "type": "table",
+      "description": "Current sprint work",
+      "filters": {
+        "status": ["In Progress", "In Review"],
+        "sprint": "Current"
+      },
+      "groupBy": "Assignee",
+      "sortBy": "Priority"
+    },
+    {
+      "name": "In Review",
+      "type": "table",
+      "description": "Pull requests in review",
+      "filters": {
+        "status": "In Review"
+      },
+      "sortBy": "Updated (newest first)"
+    },
+    {
+      "name": "Done",
+      "type": "table",
+      "description": "Completed work",
+      "filters": {
+        "status": "Done"
+      },
+      "sortBy": "Completed (newest first)"
+    },
+    {
+      "name": "Roadmap",
+      "type": "roadmap",
+      "description": "Release timeline and milestones",
+      "groupBy": "Milestone"
+    }
+  ],
+  "statuses": [
+    {
+      "name": "TODO",
+      "description": "Not yet started",
+      "color": "gray",
+      "order": 1
+    },
+    {
+      "name": "In Progress",
+      "description": "Currently being worked on",
+      "color": "blue",
+      "order": 2
+    },
+    {
+      "name": "In Review",
+      "description": "Pull request review stage",
+      "color": "purple",
+      "order": 3
+    },
+    {
+      "name": "Done",
+      "description": "Completed and merged",
+      "color": "green",
+      "order": 4
+    }
+  ],
+  "priorities": [
+    {
+      "name": "Critical",
+      "description": "Production blocker - fix immediately",
+      "order": 1,
+      "label": "priority:critical"
+    },
+    {
+      "name": "High",
+      "description": "Important feature or bug",
+      "order": 2,
+      "label": "priority:high"
+    },
+    {
+      "name": "Medium",
+      "description": "Standard priority",
+      "order": 3,
+      "label": "priority:medium"
+    },
+    {
+      "name": "Low",
+      "description": "Nice to have",
+      "order": 4,
+      "label": "priority:low"
+    }
+  ],
+  "labels": [
+    {
+      "name": "bug",
+      "color": "ff0000",
+      "description": "Something isn't working"
+    },
+    {
+      "name": "feature",
+      "color": "00ff00",
+      "description": "New feature request"
+    },
+    {
+      "name": "docs",
+      "color": "0000ff",
+      "description": "Documentation changes"
+    },
+    {
+      "name": "infra",
+      "color": "ff9900",
+      "description": "Infrastructure/deployment"
+    },
+    {
+      "name": "security",
+      "color": "ff00ff",
+      "description": "Security-related"
+    },
+    {
+      "name": "performance",
+      "color": "00ffff",
+      "description": "Performance improvement"
+    },
+    {
+      "name": "blocked",
+      "color": "999999",
+      "description": "Blocked by another issue"
+    },
+    {
+      "name": "ready-for-dev",
+      "color": "006600",
+      "description": "Ready for development"
+    }
+  ],
+  "automations": [
+    {
+      "name": "Auto-add to project",
+      "trigger": "issue_opened",
+      "action": "add_to_project",
+      "description": "Automatically add new issues to this project"
+    },
+    {
+      "name": "PR auto-review",
+      "trigger": "pull_request_opened",
+      "action": "move_to_column",
+      "columnName": "In Review",
+      "description": "Automatically move PRs to In Review"
+    },
+    {
+      "name": "Auto-close",
+      "trigger": "pull_request_merged",
+      "action": "move_to_column",
+      "columnName": "Done",
+      "description": "Move merged PRs to Done"
+    }
+  ],
+  "milestones": [
+    {
+      "title": "v1.0.0 - Initial Release",
+      "description": "Foundation features and deployment infrastructure",
+      "dueDate": "2025-12-31",
+      "status": "active",
+      "features": [
+        "Docker multi-stage build setup",
+        "Kubernetes manifests and HPA",
+        "PostgreSQL and Redis integration",
+        "Health checks and monitoring",
+        "Documentation complete"
+      ]
+    },
+    {
+      "title": "v1.1.0 - Multi-Region Support",
+      "description": "Geographic distribution and failover",
+      "dueDate": "2026-02-28",
+      "status": "planned",
+      "features": [
+        "Multi-region deployment",
+        "Data replication setup",
+        "DNS failover configuration",
+        "Disaster recovery procedures"
+      ]
+    },
+    {
+      "title": "v1.2.0 - Enhanced Security",
+      "description": "Azure Key Vault integration and RBAC",
+      "dueDate": "2026-03-31",
+      "status": "planned",
+      "features": [
+        "Azure Key Vault integration",
+        "RBAC implementation",
+        "Secret rotation automation",
+        "Audit logging"
+      ]
+    }
+  ],
+  "customFields": [
+    {
+      "name": "Assignee",
+      "type": "user",
+      "description": "Who is working on this"
+    },
+    {
+      "name": "Priority",
+      "type": "select",
+      "options": ["Critical", "High", "Medium", "Low"]
+    },
+    {
+      "name": "Sprint",
+      "type": "select",
+      "options": ["Sprint 1", "Sprint 2", "Sprint 3", "Backlog"]
+    },
+    {
+      "name": "Estimate",
+      "type": "text",
+      "description": "Story points or time estimate"
+    },
+    {
+      "name": "Category",
+      "type": "select",
+      "options": ["Feature", "Bug", "Documentation", "Infrastructure", "Security"]
+    }
+  ],
+  "templates": {
+    "bug": {
+      "title": "[BUG] Brief description",
+      "body": "## Description\nClear and concise description of the bug.\n\n## Steps to Reproduce\n1. Step one\n2. Step two\n\n## Expected Behavior\nWhat should happen\n\n## Actual Behavior\nWhat actually happens\n\n## Environment\n- OS:\n- Docker version:\n- N8N version:",
+      "labels": ["bug"]
+    },
+    "feature": {
+      "title": "[FEATURE] Brief description",
+      "body": "## Description\nClear description of the feature.\n\n## Use Case\nWhy is this needed?\n\n## Implementation\nProposed implementation approach.\n\n## Related Issues\nLink to related issues if any.",
+      "labels": ["feature"]
+    },
+    "documentation": {
+      "title": "[DOCS] Brief description",
+      "body": "## Documentation Needed\nDescribe what documentation needs to be updated or added.\n\n## Files to Update\n- docs/file.md\n\n## Content Changes\nDescribe the changes needed.",
+      "labels": ["docs"]
+    },
+    "infrastructure": {
+      "title": "[INFRA] Brief description",
+      "body": "## Infrastructure Change\nDescribe the infrastructure change.\n\n## Impact Analysis\nWhat systems are affected?\n\n## Implementation Steps\n1. Step one\n2. Step two\n\n## Rollback Plan\nHow to rollback if needed.",
+      "labels": ["infra"]
+    }
+  },
+  "workflowStatuses": {
+    "todo": {
+      "action": "start_work",
+      "nextStatus": "in_progress"
+    },
+    "in_progress": {
+      "action": "request_review",
+      "nextStatus": "in_review"
+    },
+    "in_review": {
+      "action": "merge_pr",
+      "nextStatus": "done"
+    },
+    "done": {
+      "action": "release",
+      "nextStatus": null
+    }
+  },
+  "notifications": {
+    "onIssueCreated": {
+      "recipients": ["team"],
+      "message": "New issue created: {title}"
+    },
+    "onPRCreated": {
+      "recipients": ["maintainers"],
+      "message": "PR ready for review: {title}"
+    },
+    "onBlocker": {
+      "recipients": ["team"],
+      "message": "BLOCKER: {title}"
+    }
+  },
+  "reportingDashboard": {
+    "metrics": [
+      {
+        "name": "Issues by Priority",
+        "type": "pie_chart",
+        "groupBy": "Priority"
+      },
+      {
+        "name": "Issues by Status",
+        "type": "column_chart",
+        "groupBy": "Status"
+      },
+      {
+        "name": "Burndown Chart",
+        "type": "line_chart",
+        "period": "sprint"
+      },
+      {
+        "name": "PR Review Time",
+        "type": "average",
+        "metric": "time_in_review"
+      }
+    ]
+  },
+  "integrations": {
+    "github": {
+      "enabled": true,
+      "autoSync": true
+    },
+    "slack": {
+      "enabled": true,
+      "webhookUrl": "${SLACK_WEBHOOK_URL}",
+      "notifyOn": ["blockers", "releases"]
+    },
+    "azureKeyVault": {
+      "enabled": true,
+      "purpose": "Secure credentials storage"
+    }
+  },
+  "exportNotes": "This configuration file can be imported into GitHub Projects for consistent project setup. Update webhook URLs and integration credentials before use."
+}
