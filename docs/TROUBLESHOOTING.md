@@ -21,6 +21,7 @@ kubectl get pvc -n n8n
 ```
 
 **Common causes**:
+
 - Insufficient cluster resources
 - PVC not bound to any node
 - Image pull errors
@@ -47,6 +48,7 @@ kubectl exec -n n8n n8n-main-<pod> -- nslookup postgres
 ```
 
 **Common causes**:
+
 - PostgreSQL pod not running
 - Incorrect credentials
 - Network policy blocking traffic
@@ -73,6 +75,7 @@ kubectl exec -n n8n redis-0 -- redis-cli DBSIZE
 ```
 
 **Common causes**:
+
 - Redis pod crashed
 - Memory full (eviction in progress)
 - Network connectivity issues
@@ -98,6 +101,7 @@ kubectl get pod -n n8n -o yaml | grep memory
 ```
 
 **Fixes**:
+
 - Increase memory limits in manifests
 - Reduce concurrent workflow executions
 - Archive completed executions
@@ -126,6 +130,7 @@ kubectl logs -n n8n -l app=n8n-worker -f
 ```
 
 **Optimizations**:
+
 - Scale up worker replicas
 - Increase resource requests
 - Optimize workflow logic
@@ -263,21 +268,25 @@ kubectl exec -n n8n postgres-0 -- \
 ## Getting Help
 
 1. **Check logs**:
+
    ```bash
    kubectl logs -n n8n -l app=n8n-main --tail=50
    ```
 
 2. **Describe resources**:
+
    ```bash
    kubectl describe pod -n n8n <pod-name>
    ```
 
 3. **Check events**:
+
    ```bash
    kubectl get events -n n8n --sort-by='.lastTimestamp'
    ```
 
 4. **Run diagnostics**:
+
    ```bash
    ./scripts/health-check.sh n8n
    ```

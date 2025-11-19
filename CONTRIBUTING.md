@@ -23,12 +23,14 @@ n8n-queue-instance/
 ## Naming Conventions
 
 ### Branches
+
 - `feature/*` - New features
 - `bugfix/*` - Bug fixes
 - `hotfix/*` - Production hotfixes
 - `docs/*` - Documentation updates
 
 ### Commits
+
 - `feat:` - New feature
 - `fix:` - Bug fix
 - `docs:` - Documentation
@@ -40,6 +42,7 @@ Example: `git commit -m "feat: add Redis Sentinel support"`
 ## Code Standards
 
 ### Kubernetes YAML
+
 - Use snake_case for field names
 - Include resource limits/requests
 - Document non-obvious configurations
@@ -47,12 +50,14 @@ Example: `git commit -m "feat: add Redis Sentinel support"`
 - Use Secrets for sensitive data
 
 ### Bash Scripts
+
 - Include shebang: `#!/bin/bash`
 - Add usage comments
 - Use error handling: `set -e`
 - Validate inputs
 
 ### Docker
+
 - Use Alpine images for smaller size
 - Multi-stage builds for optimization
 - Non-root user for security
